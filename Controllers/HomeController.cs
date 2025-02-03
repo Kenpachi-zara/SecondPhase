@@ -12,7 +12,8 @@ public class HomeController(
     IScopedServiceExample scopedService, 
     ISingletonServiceExample singletonService, 
     ITransientDependencyA transientDependencyA,
-    ITransientDependencyB transientDependencyB) : ControllerBase
+    ITransientDependencyB transientDependencyB,
+    IConfiguration configuration) : ControllerBase
 {
     private readonly ILogger _logger = logger;
 
@@ -42,5 +43,22 @@ public class HomeController(
         transientDependencyB.LogMessageGuid();
         _logger.LogInformation("Transient request ended");
         return Ok();
+    }
+    
+    [Route("configuration")]
+    public IActionResult Configuration()
+    {
+        var myKeyValue = configuration["MyKey"];
+        var title = configuration["Position:Title"];
+        var name = configuration["Position:Name"];
+        var serviceApiKey = configuration["Movies:ServiceApiKey"]; 
+        var defaultLogLevel = configuration["Logging:LogLevel:Default"];
+
+
+        return Content($"MyKey value: {myKeyValue} \n" +
+                       $"Title: {title} \n" +
+                       $"Name: {name} \n" +
+                       $"From secrets.json Movies:ServiceApiKey is : {serviceApiKey} \n" +
+                       $"Default Log Level: {defaultLogLevel}");
     }
 }
